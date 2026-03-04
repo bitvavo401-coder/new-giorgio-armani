@@ -1,0 +1,37 @@
+services:
+  - type: web
+    name: giorgio-armani-app
+    runtime: node
+    plan: free
+    buildCommand: npm run build
+    startCommand: npm run start
+    healthCheckPath: /
+    
+    envVars:
+      # Database Configuration (Supabase)
+      - key: DATABASE_URL
+        scope: build,runtime
+        value: ""  # Set this in Render dashboard from Supabase
+      
+      # Application Configuration
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 5000
+      
+      # S3/R2 Storage Configuration
+      - key: AWS_S3_BUCKET
+        scope: runtime
+        value: ""  # Set in Render dashboard
+      - key: AWS_REGION
+        scope: runtime
+        value: "us-east-1"  # or 'auto' for R2
+      - key: AWS_ACCESS_KEY_ID
+        scope: runtime
+        value: ""  # Set in Render dashboard
+      - key: AWS_SECRET_ACCESS_KEY
+        scope: runtime
+        value: ""  # Set in Render dashboard
+      - key: AWS_S3_ENDPOINT
+        scope: runtime
+        value: ""  # For R2: https://xxxxx.r2.cloudflarestorage.com
