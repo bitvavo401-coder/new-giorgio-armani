@@ -83,15 +83,6 @@ app.use((req, res, next) => {
     return res.status(status).json({ message });
   });
 
-  // Health check endpoints - MUST be registered AFTER routes but BEFORE spa fallback middleware
-  app.get('/health', (_req, res) => {
-    res.status(200).json({ status: 'ok', timestamp: new Date().toISOString() });
-  });
-
-  app.get('/ready', (_req, res) => {
-    res.status(200).json({ status: 'ready', timestamp: new Date().toISOString() });
-  });
-
   // hanya setup vite di mode development
   if (process.env.NODE_ENV === "production") {
     serveStatic(app);
