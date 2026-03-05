@@ -1,94 +1,104 @@
-# Deploy & Run Guide
+# Giorgio Armani - Sistem Manajemen Anggota
 
-Panduan singkat untuk membuild dan mendeploy proyek ini (lokal atau ke layanan hosting seperti Vercel / Render / Heroku).
+Sistem manajemen anggota, deposit, dan penarikan untuk bisnis Giorgio Armani.
+
+## Fitur
+
+- **Multi-level User**: Master Admin, Admin, Agent, Customer
+- **Manajemen Anggota**: Pendaftaran, approval, lock/unlock akun
+- **Deposit & Withdrawal**: Proses deposit dan penarikan saldo
+- **Dashboard Responsif**: Tampilan optimal untuk desktop dan mobile
+- **Dual Portal**: Pemisahan akses pelanggan dan admin panel
 
 ## Persyaratan
 
-- Node.js 18+ recommended
-- PostgreSQL database (Neon, Heroku Postgres, RDS, dsb.)
-- Pastikan `DATABASE_URL` tersedia (lihat `.env`)
+- Node.js 18+
+- PostgreSQL database (Neon, Supabase, atau PostgreSQL lokal)
+- npm atau yarn
 
-## Jalankan di lokal
-
-1. Install dependensi:
+## Installasi
 
 ```bash
 npm install
 ```
 
-2. Buat file `.env` di root (contoh sudah ada `.env`) berisi:
+## Konfigurasi
 
-```
-DATABASE_URL='postgresql://user:pass@host:port/dbname?sslmode=require'
+Buat file `.env` di root folder:
+
+```env
+DATABASE_URL=postgresql://user:password@host:port/dbname?sslmode=require
+PORT=5000
+NODE_ENV=production
 ```
 
-3. Build client + server:
+## Menjalankan Aplikasi
+
+### Mode Development
+
+**Pelanggan (Port 5000):**
+```bash
+npm run dev:customer
+```
+
+**Admin Panel (Port 5001):**
+```bash
+npm run dev:admin
+```
+
+Atau jalankan keduanya sekaligus:
+```bash
+npm run dev:both
+```
+
+### Mode Production
 
 ```bash
 npm run build
-```
-
-4. Jalankan server:
-
-```bash
 npm run start
-# atau langsung
-# node dist/index.cjs
 ```
 
-5. Buka browser: `http://localhost:5000` (atau port yang Anda set di `PORT` env).
+## URL Akses
 
-## Deploy ke Vercel
+| Portal | URL | Port |
+|--------|-----|------|
+| Pelanggan | http://localhost:5000 | 5000 |
+| Admin Panel | http://localhost:5001 | 5001 |
 
-1. Di dashboard Vercel buat project dari repo.
-2. Set Build Command: `npm run build` dan Output Directory: `dist/public`.
-3. Tambahkan Environment Variables di Vercel: `DATABASE_URL` dengan value yang sesuai.
-4. Untuk server side, gunakan layanan seperti Render/Heroku/Vercel Serverless Functions — konfigurasi berbeda per platform.
+### Path Rahasia
+
+- **Pelanggan**: `/wk-panel-2210`
+- **Master Admin**: `/ms-panel-9921`
+- **Admin**: `/ad-panel-4432`
+- **Agent**: `/ag-panel-7781`
 
 ## Deploy ke Render
 
-1. Buat Web Service di Render.
-2. Build Command: `npm run build`
-3. Start Command: `npm run start`
-4. Atur Environment Variable `DATABASE_URL` di settings service.
+1. Push ke GitHub
+2. Buat project baru di Render
+3. Connect ke GitHub repo
+4. Setting environment:
+   - `DATABASE_URL`: PostgreSQL connection string
+   - `PORT`: 5000
+5. Build Command: `npm run build`
+6. Start Command: `npm run start`
 
+## Tech Stack
 
-## CI / GitHub Actions (Render deploy)
+- **Backend**: Express.js, TypeScript
+- **Frontend**: React, Vite, TailwindCSS
+- **Database**: PostgreSQL (Drizzle ORM)
+- **Deployment**: Render
 
-Kami menambahkan workflow GitHub Actions yang akan membuild proyek dan memicu deploy di Render saat ada push ke branch `main`.
-
-Langkah yang perlu Anda lakukan di GitHub repo:
-
-1. Tambahkan repository secrets `RENDER_SERVICE_ID` (ID service Render Anda) dan `RENDER_API_KEY` (API key dari Render).
-2. Pastikan service Render Anda terhubung ke repo atau dapat menerima deploy via API.
-
-Workflow berada di `.github/workflows/deploy-render.yml` dan melakukan langkah:
-- checkout
-- `npm ci`
-- `npm run build`
-- POST ke `https://api.render.com/v1/services/$RENDER_SERVICE_ID/deploys` untuk memicu deploy
-
-Jika Anda ingin saya juga membuat file `render.yaml` atau membantu mengambil `RENDER_SERVICE_ID`, beri tahu saya dan saya akan menuntun Anda melalui dashboard Render atau membuat file konfigurasi yang diperlukan.
-## Deploy ke Heroku
-
-1. Buat app di Heroku.
-2. Tambahkan `DATABASE_URL` di Config Vars.
-3. Atur Procfile (jika perlu):
+## Struktur Folder
 
 ```
-web: npm run start
+/
+├── client/           # Frontend React
+├── server/          # Backend Express
+├── shared/          # Schema dan tipe data
+├── script/          # Build scripts
+├── .env             # Environment variables
+├── package.json     # Dependencies
+└── render.yaml     # Konfigurasi Render
 ```
-
-## Catatan tentang lingkungan sandbox
-
-Jika Anda menjalankan di lingkungan yang membatasi pembuatan socket/listen (mis. beberapa sandbox online), server tidak akan dapat menjalankan `listen()` dan akan error dengan `ENOTSUP`. Jalankan pada mesin lokal atau hosting yang mendukung listening TCP.
-
-## Troubleshooting
-
-- Error `DATABASE_URL environment variable is not set`: pastikan `.env` ada dan berisi `DATABASE_URL`, atau set env var di hosting.
-- Error `ENOTSUP` saat `listen`: ini merupakan pembatasan lingkungan; jalankan di mesin lokal atau hosting yang mendukung TCP listening.
-
-Jika butuh saya siapkan panduan khusus untuk Vercel/Render (file konfigurasi), beri tahu layanan mana yang Anda pilih.
-
----
-Generated by maintainer assistant to help deployment.
