@@ -1,6 +1,13 @@
 {
-  "crons": [{
-    "path": "/api/cron",
-    "schedule": "0 10 * * *"
-  }]
+  "version": 2,
+  "rewrites": [
+    {
+      "source": "/api/(.*)",
+      "destination": "/server/index.ts"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
 }
