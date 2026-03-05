@@ -34,6 +34,11 @@ export async function setupVite(server: Server, app: Express) {
   app.use("/{*path}", async (req, res, next) => {
     const url = req.originalUrl;
 
+    // Skip health checks dan API routes
+    if (url === '/health' || url === '/ready' || url.startsWith('/api')) {
+      return next();
+    }
+
     try {
       const clientTemplate = path.resolve(
         import.meta.dirname,
